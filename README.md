@@ -7,7 +7,7 @@
 ### 簡介
 Prompt Reader 是一個用於管理和編輯圖片提示詞的工具。它可以幫助用戶查看圖片、編輯相關的提示詞，並提供暫存功能以重複使用常用的提示詞。
 
-![程式主界面](img/main.jpg)
+![程式主界面](img/zh_TW.jpg)
 
 ### 環境需求
 - Python 3.10 或更高版本
@@ -65,7 +65,7 @@ Prompt Reader 是一個用於管理和編輯圖片提示詞的工具。它可以
 ### Introduction
 Prompt Reader is a tool for managing and editing image prompts. It helps users view images, edit associated prompts, and provides a temporary storage feature for frequently used prompts.
 
-![Main Interface](img/main.jpg)
+![Main Interface](img/en.jpg)
 
 ### Requirements
 - Python 3.10 or higher
