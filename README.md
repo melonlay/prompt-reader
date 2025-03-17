@@ -7,9 +7,11 @@
 ### 簡介
 Prompt Reader 是一個用於管理和編輯圖片提示詞的工具。它可以幫助用戶查看圖片、編輯相關的提示詞，並提供暫存功能以重複使用常用的提示詞。
 
+![程式主界面](img/main.jpg)
+
 ### 環境需求
 - Python 3.10 或更高版本
-- tkinter（Python 標準庫，無需額外安裝）
+- tkinter
 - Pillow 11.1.0（用於圖片處理）
 - 作業系統：Windows、macOS 或 Linux
 
@@ -19,7 +21,7 @@ Prompt Reader 是一個用於管理和編輯圖片提示詞的工具。它可以
    ```bash
    pip install -r requirements.txt
    ```
-   注意：tkinter 已包含在 Python 標準庫中，不需要額外安裝。
+
 
 ### 功能特點
 - 圖片瀏覽功能
@@ -46,8 +48,8 @@ Prompt Reader 是一個用於管理和編輯圖片提示詞的工具。它可以
    - 或在圖片編號輸入框中輸入數字並按 Enter 跳轉
 4. 編輯提示詞：
    - 在輸入框中輸入提示詞
-   - 按 Enter 或點擊「添加到提示詞」按鈕添加到左側列表
-   - 點擊「添加到暫存」按鈕添加到右側暫存列表
+   - 按 Enter 或點擊「新增至提示詞」按鈕添加到左側列表
+   - 點擊「新增至暫存」按鈕添加到右側暫存列表
 5. 保存更改：點擊「保存」按鈕保存當前更改
 
 ### 檔案說明
@@ -63,9 +65,11 @@ Prompt Reader 是一個用於管理和編輯圖片提示詞的工具。它可以
 ### Introduction
 Prompt Reader is a tool for managing and editing image prompts. It helps users view images, edit associated prompts, and provides a temporary storage feature for frequently used prompts.
 
+![Main Interface](img/main.jpg)
+
 ### Requirements
 - Python 3.10 or higher
-- tkinter (included in Python standard library)
+- tkinter 
 - Pillow 11.1.0 (for image processing)
 - Operating System: Windows, macOS, or Linux
 
@@ -75,7 +79,6 @@ Prompt Reader is a tool for managing and editing image prompts. It helps users v
    ```bash
    pip install -r requirements.txt
    ```
-   Note: tkinter is included in the Python standard library and does not need to be installed separately.
 
 ### Features
 - Image Browsing
@@ -102,8 +105,8 @@ Prompt Reader is a tool for managing and editing image prompts. It helps users v
    - Or enter a number in the image number input box and press Enter to jump
 4. Edit Prompts:
    - Enter prompt in the input box
-   - Press Enter or click "Add to Prompts" to add to left list
-   - Click "Add to Temp" to add to right temporary list
+   - Press Enter or click "Add to Prompts" button to add to left list
+   - Click "Add to Temp List" button to add to right temporary list
 5. Save Changes: Click "Save" button to save current changes
 
 ### File Description

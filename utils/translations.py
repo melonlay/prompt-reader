@@ -31,6 +31,8 @@ class TranslationManager:
                 "confirm": "确定",
                 "language": "语言",
                 "duplicate_prompt": "提示词已存在",
+                "add_to_prompts": "新增至提示词",
+                "add_to_temp": "新增至暂存",
             },
             "zh_tw": {
                 "window_title": "提示詞編輯器",
@@ -57,6 +59,8 @@ class TranslationManager:
                 "confirm": "確定",
                 "language": "語言",
                 "duplicate_prompt": "提示詞已存在",
+                "add_to_prompts": "新增至提示詞",
+                "add_to_temp": "新增至暫存",
             },
             "en": {
                 "window_title": "Prompt Editor",
@@ -83,6 +87,8 @@ class TranslationManager:
                 "confirm": "OK",
                 "language": "Language",
                 "duplicate_prompt": "Prompt already exists",
+                "add_to_prompts": "Add to Prompts",
+                "add_to_temp": "Add to Temp List",
             }
         }
 

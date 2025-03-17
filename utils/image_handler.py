@@ -2,8 +2,6 @@ import os
 from PIL import Image, ImageTk
 import tkinter as tk
 from tkinter import ttk
-import PIL
-print(PIL.__version__)
 
 
 class ImageHandler:

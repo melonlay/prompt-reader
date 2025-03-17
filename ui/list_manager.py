@@ -63,7 +63,7 @@ class ListManager:
         # 添加到提示詞區域按鈕
         self.add_to_left_button = ttk.Button(
             self.input_buttons_frame,
-            text="添加到提示詞",
+            text=self.get_text("add_to_prompts"),
             command=self.add_to_left
         )
         self.add_to_left_button.grid(row=0, column=0, padx=2)
@@ -71,7 +71,7 @@ class ListManager:
         # 添加到暫存區域按鈕
         self.add_to_right_button = ttk.Button(
             self.input_buttons_frame,
-            text="添加到暫存",
+            text=self.get_text("add_to_temp"),
             command=self.add_to_right
         )
         self.add_to_right_button.grid(row=0, column=1, padx=2)
@@ -382,6 +382,9 @@ class ListManager:
         """更新界面文字"""
         self.left_list.update_texts(self.get_text("text_content"))
         self.right_list.update_texts(self.get_text("temp_list"))
+        # 更新按鈕文字
+        self.add_to_left_button.config(text=self.get_text("add_to_prompts"))
+        self.add_to_right_button.config(text=self.get_text("add_to_temp"))
         # 清空狀態標籤
         self.status_label.config(text="")
 
