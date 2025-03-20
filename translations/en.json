@@ -1,4 +1,5 @@
 {
+    "window_title": "Prompt Manager",
     "text_content": "Prompt Content",
     "temp_list": "Temporary List",
     "favorite_list": "Favorites",
@@ -7,11 +8,21 @@
     "delete": "Delete",
     "save": "Save",
     "select_folder": "Select Folder",
-    "previous": "Previous",
+    "prev": "Previous",
     "next": "Next",
     "image_number": "Image Number",
     "total_images": "Total",
     "language": "Language",
     "english": "English",
-    "chinese": "繁體中文"
+    "zh_tw": "Traditional Chinese",
+    "zh_cn": "Simplified Chinese",
+    "no_folder": "No folder selected",
+    "exit": "Exit",
+    "no_txt_file": "No corresponding text file found",
+    "prompts_from_image": "Prompts from image",
+    "prompts_from_txt": "Prompts from text file",
+    "total_unique_prompts": "Total unique prompts",
+    "no_prompts_found": "No prompts found",
+    "image_prompts_count": "Image prompts count",
+    "txt_prompts_count": "Text prompts count"
 } 

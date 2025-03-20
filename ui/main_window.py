@@ -49,7 +49,10 @@ class MainWindow:
         # 將列表管理器的方法連接到圖片查看器
         self.image_viewer.load_text_content = self.list_manager.load_text_content
         self.image_viewer.save_text_content = self.list_manager.save_text_content
-        print("已連接 load_text_content 和 save_text_content 方法")  # 調試信息
+        # 添加相互引用
+        self.image_viewer.list_manager = self.list_manager
+        self.list_manager.image_viewer = self.image_viewer
+        print("已連接組件之間的相互引用")  # 調試信息
 
         # 保存原始的 select_folder 方法
         original_select_folder = self.image_viewer.select_folder

@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, filedialog
 import os
 from utils.image_handler import ImageHandler
+from utils.image_utils import get_image_prompts
 
 
 class ImageViewer:
@@ -165,9 +166,50 @@ class ImageViewer:
             )
             # 獲取當前圖片路徑
             current_image_path = self.image_handler.get_current_image_path()
-            # 更新文本內容時同時傳遞資料夾路徑
+
+            # 讀取圖片提示詞
+            image_prompts = get_image_prompts(current_image_path)
+
+            # 讀取文本文件提示詞
+            txt_prompts = []
             if hasattr(self, 'load_text_content'):
                 self.load_text_content(current_image_path)
+                # 從左側列表獲取文本文件的提示詞，並確保是列表類型
+                temp_txt_prompts = list(
+                    self.list_manager.left_list.listbox.get(0, tk.END))
+                # 過濾掉 no_txt_file
+                if not (len(temp_txt_prompts) == 1 and temp_txt_prompts[0] == self.get_text("no_txt_file")):
+                    txt_prompts = temp_txt_prompts
+
+                # 如果沒有文本文件但有圖片提示詞，清空左側列表
+                if len(txt_prompts) == 0 and image_prompts:
+                    self.list_manager.left_list.listbox.delete(0, tk.END)
+
+            # 合併提示詞並去重，並按字母順序排序
+            all_prompts = sorted(list(set(image_prompts + txt_prompts)))
+
+            if all_prompts:
+                # 更新提示詞列表
+                self.update_prompt_list(all_prompts)
+                # 更新狀態標籤
+                status_parts = []
+                if image_prompts:
+                    status_parts.append(
+                        f"{self.get_text('image_prompts_count')}: {len(image_prompts)}")
+                if txt_prompts:
+                    status_parts.append(
+                        f"{self.get_text('txt_prompts_count')}: {len(txt_prompts)}")
+                if all_prompts:
+                    status_parts.append(
+                        f"{self.get_text('total_unique_prompts')}: {len(all_prompts)}")
+
+                status_text = ", ".join(status_parts)
+                self.list_manager.status_label.config(text=status_text)
+            else:
+                # 如果沒有任何提示詞，顯示提示信息
+                self.list_manager.status_label.config(
+                    text=self.get_text("no_prompts_found"))
+
             self.update_button_states()
             return True
         return False
@@ -248,3 +290,12 @@ class ImageViewer:
             self.current_image_var.set(str(current))
         else:
             self.current_image_var.set("0")
+
+    def update_prompt_list(self, prompts):
+        """更新提示詞列表"""
+        if hasattr(self, 'list_manager'):
+            # 清空左側列表
+            self.list_manager.left_list.listbox.delete(0, tk.END)
+            # 添加新的提示詞
+            for prompt in prompts:
+                self.list_manager.left_list.listbox.insert(tk.END, prompt)

@@ -1,4 +1,5 @@
 {
+    "window_title": "提示词管理器",
     "text_content": "提示词内容",
     "temp_list": "暂存列表",
     "favorite_list": "收藏列表",
@@ -7,11 +8,21 @@
     "delete": "删除",
     "save": "保存",
     "select_folder": "选择文件夹",
-    "previous": "上一张",
+    "prev": "上一张",
     "next": "下一张",
     "image_number": "图片编号",
     "total_images": "总数",
     "language": "语言",
     "english": "English",
-    "chinese": "简体中文"
+    "zh_tw": "繁體中文",
+    "zh_cn": "简体中文",
+    "no_folder": "未选择文件夹",
+    "exit": "退出",
+    "no_txt_file": "找不到对应的文本文件",
+    "prompts_from_image": "从图片读取提示词",
+    "prompts_from_txt": "从文本文件读取提示词",
+    "total_unique_prompts": "不重复提示词总数",
+    "no_prompts_found": "未找到任何提示词",
+    "image_prompts_count": "图片提示词数量",
+    "txt_prompts_count": "文本提示词数量"
 } 

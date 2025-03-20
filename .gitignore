@@ -35,4 +35,5 @@ ENV/
 temp.txt
 *.txt
 !requirements.txt
-!README.md 
+!README.md
+*.log 

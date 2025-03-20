@@ -1,4 +1,5 @@
 {
+    "window_title": "提示詞管理器",
     "text_content": "提示詞內容",
     "temp_list": "暫存列表",
     "favorite_list": "收藏列表",
@@ -7,11 +8,21 @@
     "delete": "刪除",
     "save": "保存",
     "select_folder": "選擇資料夾",
-    "previous": "上一張",
+    "prev": "上一張",
     "next": "下一張",
     "image_number": "圖片編號",
     "total_images": "總數",
     "language": "語言",
     "english": "English",
-    "chinese": "繁體中文"
+    "zh_tw": "繁體中文",
+    "zh_cn": "简体中文",
+    "no_folder": "未選擇資料夾",
+    "exit": "退出",
+    "no_txt_file": "找不到對應的文本文件",
+    "prompts_from_image": "從圖片讀取提示詞",
+    "prompts_from_txt": "從文本文件讀取提示詞",
+    "total_unique_prompts": "不重複提示詞總數",
+    "no_prompts_found": "未找到任何提示詞",
+    "image_prompts_count": "圖片提示詞數量",
+    "txt_prompts_count": "文本提示詞數量"
 } 
