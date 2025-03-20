@@ -1,103 +1,34 @@
+import json
+import os
+
+
 class TranslationManager:
     def __init__(self):
-        self.current_lang = "zh_tw"  # 預設繁體中文
+        self.current_lang = "zh_TW"  # 預設繁體中文
         self.setup_translations()
 
     def setup_translations(self):
         """設置翻譯字典"""
-        self.translations = {
-            "zh_cn": {
-                "window_title": "提示词编辑器",
-                "select_folder": "选择文件夹",
-                "no_folder": "未选择文件夹",
-                "text_content": "提示词内容：",
-                "temp_list": "常用提示词：",
-                "delete": "删除",
-                "prev": "上一张",
-                "next": "下一张",
-                "save": "保存提示词",
-                "exit": "退出",
-                "save_success": "提示词保存成功！",
-                "save_failed": "提示词保存失败：",
-                "temp_save_failed": "常用提示词保存失败：",
-                "no_txt_file": "未找到对应的提示词文件",
-                "no_file": "提示词内容：无对应文件",
-                "loaded": "已加载",
-                "load_failed": "读取失败",
-                "saved": "已保存",
-                "cant_read_file": "无法读取提示词文件：",
-                "cant_read_temp": "无法读取常用提示词：",
-                "save_status": "保存状态",
-                "confirm": "确定",
-                "language": "语言",
-                "duplicate_prompt": "提示词已存在",
-                "add_to_prompts": "新增至提示词",
-                "add_to_temp": "新增至暂存",
-            },
-            "zh_tw": {
-                "window_title": "提示詞編輯器",
-                "select_folder": "選擇資料夾",
-                "no_folder": "未選擇資料夾",
-                "text_content": "提示詞內容：",
-                "temp_list": "常用提示詞：",
-                "delete": "刪除",
-                "prev": "上一張",
-                "next": "下一張",
-                "save": "儲存提示詞",
-                "exit": "退出",
-                "save_success": "提示詞儲存成功！",
-                "save_failed": "提示詞儲存失敗：",
-                "temp_save_failed": "常用提示詞儲存失敗：",
-                "no_txt_file": "未找到對應的提示詞檔案",
-                "no_file": "提示詞內容：無對應檔案",
-                "loaded": "已載入",
-                "load_failed": "讀取失敗",
-                "saved": "已儲存",
-                "cant_read_file": "無法讀取提示詞檔案：",
-                "cant_read_temp": "無法讀取常用提示詞：",
-                "save_status": "儲存狀態",
-                "confirm": "確定",
-                "language": "語言",
-                "duplicate_prompt": "提示詞已存在",
-                "add_to_prompts": "新增至提示詞",
-                "add_to_temp": "新增至暫存",
-            },
-            "en": {
-                "window_title": "Prompt Editor",
-                "select_folder": "Select Folder",
-                "no_folder": "No Folder Selected",
-                "text_content": "Prompt Content: ",
-                "temp_list": "Common Prompts: ",
-                "delete": "Delete",
-                "prev": "Previous",
-                "next": "Next",
-                "save": "Save Prompt",
-                "exit": "Exit",
-                "save_success": "Prompt Saved Successfully!",
-                "save_failed": "Failed to Save Prompt: ",
-                "temp_save_failed": "Failed to Save Common Prompts: ",
-                "no_txt_file": "No corresponding prompt file found",
-                "no_file": "Prompt Content: No File",
-                "loaded": "Loaded",
-                "load_failed": "Load Failed",
-                "saved": "Saved",
-                "cant_read_file": "Cannot read prompt file: ",
-                "cant_read_temp": "Cannot read common prompts: ",
-                "save_status": "Save Status",
-                "confirm": "OK",
-                "language": "Language",
-                "duplicate_prompt": "Prompt already exists",
-                "add_to_prompts": "Add to Prompts",
-                "add_to_temp": "Add to Temp List",
-            }
-        }
-
-        # 語言顯示名稱映射
+        self.translations = {}
         self.language_names = {
-            "zh_cn": "简体中文",
-            "zh_tw": "繁體中文",
+            "zh_CN": "简体中文",
+            "zh_TW": "繁體中文",
             "en": "English"
         }
+
+        # 從 JSON 文件加載翻譯
+        translations_dir = os.path.join(os.path.dirname(
+            os.path.dirname(__file__)), 'translations')
+        for lang_code in self.language_names.keys():
+            json_path = os.path.join(
+                translations_dir, f'{lang_code.lower()}.json')
+            try:
+                with open(json_path, 'r', encoding='utf-8') as f:
+                    self.translations[lang_code] = json.load(f)
+            except Exception as e:
+                print(f"無法加載 {lang_code} 的翻譯文件：{str(e)}")
+                # 如果加載失敗，使用空字典
+                self.translations[lang_code] = {}
 
     def get_text(self, key):
         """獲取當前語言的文本"""

@@ -1,0 +1,17 @@
+{
+    "text_content": "Prompt Content",
+    "temp_list": "Temporary List",
+    "favorite_list": "Favorites",
+    "add_to_prompts": "Add to Prompts",
+    "add_to_temp": "Add to Temp",
+    "delete": "Delete",
+    "save": "Save",
+    "select_folder": "Select Folder",
+    "previous": "Previous",
+    "next": "Next",
+    "image_number": "Image Number",
+    "total_images": "Total",
+    "language": "Language",
+    "english": "English",
+    "chinese": "繁體中文"
+} 

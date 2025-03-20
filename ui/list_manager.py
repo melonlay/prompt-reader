@@ -10,6 +10,10 @@ class ListManager:
         self.create_frame(parent)
         self.current_folder = ""
         self.current_txt_path = None
+        # 創建右鍵選單
+        self.context_menu = tk.Menu(parent, tearoff=0)
+        self.context_menu.add_command(label=self.get_text(
+            "delete"), command=self.delete_selected_item)
 
     def get_text(self, key):
         """獲取當前語言的文本"""
@@ -91,6 +95,12 @@ class ListManager:
         self.left_list.grid(row=0, column=0, sticky=(
             tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
 
+        # 綁定雙擊事件
+        self.left_list.listbox.bind(
+            '<Double-Button-1>', self.on_left_double_click)
+        # 綁定右鍵事件
+        self.left_list.listbox.bind('<Button-3>', self.show_context_menu)
+
         # 創建傳輸按鈕
         self.create_transfer_buttons()
 
@@ -103,6 +113,12 @@ class ListManager:
         )
         self.right_list.grid(row=0, column=2, sticky=(
             tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
+
+        # 綁定雙擊事件
+        self.right_list.listbox.bind(
+            '<Double-Button-1>', self.on_right_double_click)
+        # 綁定右鍵事件
+        self.right_list.listbox.bind('<Button-3>', self.show_context_menu)
 
     def create_transfer_buttons(self):
         """創建中間傳輸按鈕"""
@@ -158,25 +174,26 @@ class ListManager:
 
     def set_current_folder(self, folder_path):
         """設置當前資料夾並執行相關操作"""
-        print("\n=== 設置當前資料夾 ===")  # 調試信息
-        print(f"新資料夾路徑：'{folder_path}'")  # 調試信息
+        print("\n=== 設置當前資料夾 ===")
+        print(f"新資料夾路徑：'{folder_path}'")
 
         if not folder_path:
-            print("錯誤：資料夾路徑為空")  # 調試信息
+            print("錯誤：資料夾路徑為空")
             return False
 
         if not os.path.exists(folder_path):
-            print(f"錯誤：資料夾不存在：{folder_path}")  # 調試信息
+            print(f"錯誤：資料夾不存在：{folder_path}")
             return False
 
         # 更新資料夾路徑
         self.current_folder = folder_path
-        print(f"已更新資料夾路徑：'{self.current_folder}'")  # 調試信息
+        print(f"已更新資料夾路徑：'{self.current_folder}'")
 
-        # 載入暫存列表
+        # 載入暫存列表和收藏列表
         self.load_temp_list()
+        self.load_favorites()
 
-        print("=== 資料夾設置完成 ===\n")  # 調試信息
+        print("=== 資料夾設置完成 ===\n")
         return True
 
     def load_temp_list(self):
@@ -276,58 +293,36 @@ class ListManager:
             return False
 
     def save_text_content(self):
-        """保存修改後的內容到txt文件"""
-        print("\n=== 開始保存文本內容 ===")  # 調試信息
-        print(f"當前文本路徑：{self.current_txt_path}")  # 調試信息
-        print(f"當前資料夾路徑：{self.current_folder}")  # 調試信息
+        """保存文本內容到文件"""
+        print("\n=== 開始保存文本內容 ===")
+        print(f"當前文本路徑：{self.current_txt_path}")
 
         if not self.current_txt_path:
-            error_msg = self.get_text("no_txt_file")
-            print(f"錯誤：{error_msg}")  # 調試信息
-            self.status_label.config(text=error_msg)
+            print("錯誤：當前文本路徑為空")
+            self.status_label.config(text="錯誤：未選擇文本文件")
             return False
 
         try:
-            items = [self.left_list.listbox.get(
-                i) for i in range(self.left_list.listbox.size())]
+            # 獲取左側列表的所有項目
+            items = self.left_list.listbox.get(0, tk.END)
+            content = ','.join(items)
+            print(f"準備保存的內容：{content}")
 
-            if not items:
-                error_msg = "沒有內容需要保存"
-                print(f"錯誤：{error_msg}")  # 調試信息
-                self.status_label.config(text=error_msg)
-                return False
-
-            content = ', '.join(items)
-            print(f"準備保存的內容：{content}")  # 調試信息
-
-            # 確保目標目錄存在
-            save_dir = os.path.dirname(self.current_txt_path)
-            os.makedirs(save_dir, exist_ok=True)
-            print(f"保存目錄：{save_dir}")  # 調試信息
-
+            # 保存文本內容
             with open(self.current_txt_path, 'w', encoding='utf-8') as f:
                 f.write(content)
 
-            success_msg = self.get_text("save_success")
-            print(f"成功：{success_msg}")  # 調試信息
-            self.status_label.config(text=success_msg)
-
-            # 確保 current_folder 已設置
-            if not self.current_folder:
-                self.current_folder = save_dir
-                print(f"從保存目錄更新資料夾路徑：{self.current_folder}")  # 調試信息
-
-            # 保存完文本內容後，也保存暫存列表
-            print("開始保存暫存列表...")  # 調試信息
+            # 保存暫存列表
             self.save_temp_list()
-            print("=== 文本內容保存完成 ===\n")  # 調試信息
-            return True
 
+            success_msg = "保存成功"
+            print(f"成功：{success_msg}")
+            self.status_label.config(text=success_msg)
+            return True
         except Exception as e:
-            error_msg = f"{self.get_text('save_failed')}{str(e)}"
-            print(f"錯誤：{error_msg}")  # 調試信息
+            error_msg = f"保存失敗：{str(e)}"
+            print(f"錯誤：{error_msg}")
             self.status_label.config(text=error_msg)
-            print("=== 文本內容保存失敗 ===\n")  # 調試信息
             return False
 
     def save_temp_list(self):
@@ -385,6 +380,8 @@ class ListManager:
         # 更新按鈕文字
         self.add_to_left_button.config(text=self.get_text("add_to_prompts"))
         self.add_to_right_button.config(text=self.get_text("add_to_temp"))
+        # 更新右鍵選單文字
+        self.context_menu.entryconfig(0, label=self.get_text("delete"))
         # 清空狀態標籤
         self.status_label.config(text="")
 
@@ -418,3 +415,91 @@ class ListManager:
         """處理回車鍵事件"""
         # 預設添加到提示詞區域
         self.add_to_left()
+
+    def on_left_double_click(self, event):
+        """處理左側列表的雙擊事件 - 將項目添加到暫存列表"""
+        selection = self.left_list.listbox.curselection()
+        if selection:
+            index = selection[0]
+            item = self.left_list.listbox.get(index)
+            # 檢查是否已存在於右側列表
+            existing_items = self.right_list.listbox.get(0, tk.END)
+            if item not in existing_items:
+                self.right_list.listbox.insert(tk.END, item)
+                self.status_label.config(text=f"已添加到暫存列表：{item}")
+
+    def on_right_double_click(self, event):
+        """處理右側列表的雙擊事件 - 將項目添加到提示詞列表"""
+        selection = self.right_list.listbox.curselection()
+        if selection:
+            index = selection[0]
+            item = self.right_list.listbox.get(index)
+            # 檢查是否已存在於左側列表
+            existing_items = self.left_list.listbox.get(0, tk.END)
+            if item not in existing_items:
+                self.left_list.listbox.insert(tk.END, item)
+                self.status_label.config(text=f"已添加到提示詞列表：{item}")
+
+    def load_favorites(self):
+        """從文件加載收藏列表"""
+        if not self.current_folder:
+            return False
+
+        favorites_path = os.path.join(self.current_folder, 'favorites.txt')
+        if os.path.exists(favorites_path):
+            try:
+                with open(favorites_path, 'r', encoding='utf-8') as f:
+                    content = f.read().strip()
+                    self.favorite_list = [
+                        item.strip() for item in content.split(',') if item.strip()]
+                    self.favorite_list_frame.listbox.delete(0, tk.END)
+                    for item in self.favorite_list:
+                        self.favorite_list_frame.listbox.insert(tk.END, item)
+                return True
+            except Exception as e:
+                print(f"加載收藏列表失敗：{str(e)}")
+                return False
+        return True
+
+    def save_favorites(self):
+        """保存收藏列表到文件"""
+        if not self.current_folder:
+            return False
+
+        favorites_path = os.path.join(self.current_folder, 'favorites.txt')
+        try:
+            with open(favorites_path, 'w', encoding='utf-8') as f:
+                f.write(','.join(self.favorite_list))
+            return True
+        except Exception as e:
+            print(f"保存收藏列表失敗：{str(e)}")
+            return False
+
+    def show_context_menu(self, event):
+        """直接刪除選中的項目"""
+        # 獲取被點擊的列表
+        clicked_list = event.widget
+        # 確保有選中的項目
+        if clicked_list.curselection():
+            index = clicked_list.curselection()[0]
+            item = clicked_list.get(index)
+            clicked_list.delete(index)
+            # 更新狀態標籤
+            if clicked_list == self.left_list.listbox:
+                self.status_label.config(text=f"已從提示詞列表移除：{item}")
+            else:
+                self.status_label.config(text=f"已從暫存列表移除：{item}")
+
+    def delete_selected_item(self):
+        """刪除選中的項目"""
+        if hasattr(self, 'current_selected_list'):
+            selection = self.current_selected_list.curselection()
+            if selection:
+                index = selection[0]
+                item = self.current_selected_list.get(index)
+                self.current_selected_list.delete(index)
+                # 更新狀態標籤
+                if self.current_selected_list == self.left_list.listbox:
+                    self.status_label.config(text=f"已從提示詞列表移除：{item}")
+                else:
+                    self.status_label.config(text=f"已從暫存列表移除：{item}")

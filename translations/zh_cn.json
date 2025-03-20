@@ -1,0 +1,17 @@
+{
+    "text_content": "提示词内容",
+    "temp_list": "暂存列表",
+    "favorite_list": "收藏列表",
+    "add_to_prompts": "新增至提示词",
+    "add_to_temp": "新增至暂存",
+    "delete": "删除",
+    "save": "保存",
+    "select_folder": "选择文件夹",
+    "previous": "上一张",
+    "next": "下一张",
+    "image_number": "图片编号",
+    "total_images": "总数",
+    "language": "语言",
+    "english": "English",
+    "chinese": "简体中文"
+} 
