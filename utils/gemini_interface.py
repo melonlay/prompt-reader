@@ -32,7 +32,9 @@ class GeminiInterface:
 
     def get_prompt_suggestions(self, img, temp_prompts):
         """获取提示词建议"""
-        command = '''looking at this image, please check the temp_prompt, and give me possible prompt in temp_prompt that is suitable for this image, do not remove any underline _ or replace space with underline _.
+        command = '''looking at this image, please check the temp_prompt, and give me possible prompt in temp_prompt that is suitable for this image, 
+        do not remove any underline _,
+        and do not replace space with underline _ in the temp_prompt.
         input:{temp_prompts}
         Return:list[str]
         '''
