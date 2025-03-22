@@ -3,6 +3,7 @@ from tkinter import ttk, filedialog
 import os
 from utils.image_handler import ImageHandler
 from utils.image_utils import get_image_prompts
+from PIL import Image, ImageTk
 
 
 class ImageViewer:
@@ -141,8 +142,12 @@ class ImageViewer:
 
             print("正在加載圖片...")  # 調試信息
             if self.image_handler.load_images(folder_path):
-                # 調試信息
-                print(f"找到 {self.image_handler.get_total_images()} 張圖片")
+                # 更新總數顯示
+                total_images = self.image_handler.get_total_images()
+                self.total_label.config(text=f"/{total_images}")
+                print(f"找到 {total_images} 張圖片")  # 調試信息
+
+                # 顯示第一張圖片
                 self.show_image(0)
                 self.update_button_states()
                 self.save_button.config(state=tk.NORMAL)
@@ -150,6 +155,7 @@ class ImageViewer:
                 return folder_path
             else:
                 print("警告：資料夾中沒有找到圖片")  # 調試信息
+                self.total_label.config(text="/0")  # 重置總數顯示
                 print("=== ImageViewer 資料夾選擇完成 ===\n")  # 調試信息
                 return folder_path
 
@@ -159,11 +165,28 @@ class ImageViewer:
 
     def show_image(self, index):
         """顯示指定索引的圖片"""
-        if self.image_handler.show_image(index, self.image_label):
-            self.update_counter(
-                index + 1,
-                self.image_handler.get_total_images()
-            )
+        if self.image_handler.set_current_image(index):
+            # 更新當前圖片編號
+            self.current_image_var.set(str(index + 1))
+            # 更新總數顯示
+            total_images = len(self.image_handler.image_files)
+            self.total_label.config(text=f"/{total_images}")
+
+            # 調整圖片大小並顯示
+            image = self.image_handler.current_image
+            if image:
+                resized_image = self.image_handler.resize_image(image)
+                self.photo = ImageTk.PhotoImage(resized_image)
+                self.image_label.configure(image=self.photo)
+
+                # 更新按鈕狀態
+                self.update_button_states()
+
+                # 加載對應的文本內容
+                if hasattr(self, 'load_text_content'):
+                    current_image_path = self.image_handler.image_files[index]
+                    self.load_text_content(current_image_path)
+
             # 獲取當前圖片路徑
             current_image_path = self.image_handler.get_current_image_path()
 

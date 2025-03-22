@@ -4,8 +4,12 @@
 import os
 import sys
 import traceback
+from dotenv import load_dotenv
 from utils.translations import TranslationManager
 from ui.main_window import MainWindow
+
+# 加载环境变量
+load_dotenv()
 
 
 def setup_style(root):

@@ -21,6 +21,9 @@ class ImageHandler:
             if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp')):
                 self.image_files.append(os.path.join(folder_path, file))
         self.image_files.sort()  # 按文件名排序
+        if self.image_files:
+            self.current_index = 0
+            self.current_image = Image.open(self.image_files[0])
         return bool(self.image_files)
 
     def resize_image(self, image):
@@ -93,3 +96,11 @@ class ImageHandler:
     def can_move_next(self):
         """檢查是否可以顯示下一張圖片"""
         return self.current_index < len(self.image_files) - 1
+
+    def set_current_image(self, index):
+        """設置當前圖片"""
+        if 0 <= index < len(self.image_files):
+            self.current_index = index
+            self.current_image = Image.open(self.image_files[index])
+            return True
+        return False

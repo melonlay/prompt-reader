@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 import os
 from .ui_components import ListFrame
+from utils.gemini_interface import GeminiInterface
+from PIL import Image
 
 
 class ListManager:
@@ -10,6 +12,18 @@ class ListManager:
         self.create_frame(parent)
         self.current_folder = ""
         self.current_txt_path = None
+
+        # 初始化 Gemini 接口
+        api_key = os.getenv('GEMINI_API_KEY')
+        if api_key:
+            try:
+                self.gemini = GeminiInterface(api_key)
+            except Exception as e:
+                print(f"Error initializing Gemini interface: {str(e)}")
+                self.gemini = None
+        else:
+            self.gemini = None
+
         # 創建右鍵選單
         self.context_menu = tk.Menu(parent, tearoff=0)
         self.context_menu.add_command(label=self.get_text(
@@ -64,13 +78,21 @@ class ListManager:
         self.input_buttons_frame = ttk.Frame(self.input_frame)
         self.input_buttons_frame.grid(row=0, column=1)
 
+        # 添加 Gemini 建議按鈕
+        self.gemini_button = ttk.Button(
+            self.input_buttons_frame,
+            text=self.get_text("get_suggestions"),
+            command=self.get_gemini_suggestions
+        )
+        self.gemini_button.grid(row=0, column=0, padx=2)
+
         # 添加到提示詞區域按鈕
         self.add_to_left_button = ttk.Button(
             self.input_buttons_frame,
             text=self.get_text("add_to_prompts"),
             command=self.add_to_left
         )
-        self.add_to_left_button.grid(row=0, column=0, padx=2)
+        self.add_to_left_button.grid(row=0, column=1, padx=2)
 
         # 添加到暫存區域按鈕
         self.add_to_right_button = ttk.Button(
@@ -78,7 +100,7 @@ class ListManager:
             text=self.get_text("add_to_temp"),
             command=self.add_to_right
         )
-        self.add_to_right_button.grid(row=0, column=1, padx=2)
+        self.add_to_right_button.grid(row=0, column=2, padx=2)
 
         # 綁定回車鍵事件
         self.prompt_entry.bind('<Return>', self.on_enter_press)
@@ -503,3 +525,66 @@ class ListManager:
                     self.status_label.config(text=f"已從提示詞列表移除：{item}")
                 else:
                     self.status_label.config(text=f"已從暫存列表移除：{item}")
+
+    def get_gemini_suggestions(self):
+        """從 Gemini 獲取提示詞建議"""
+        try:
+            # 檢查是否已初始化 Gemini 接口
+            if not self.gemini:
+                api_key = os.getenv('GEMINI_API_KEY')
+                if not api_key:
+                    self.status_label.config(text=self.get_text("no_api_key"))
+                    return
+                try:
+                    self.gemini = GeminiInterface(api_key)
+                except Exception as e:
+                    print(f"Error initializing Gemini interface: {str(e)}")
+                    self.status_label.config(
+                        text=self.get_text("suggestion_error"))
+                    return
+
+            # 檢查是否有選擇圖片
+            if not hasattr(self, 'image_viewer') or not self.image_viewer.image_handler.current_image:
+                self.status_label.config(
+                    text=self.get_text("no_image_selected"))
+                return
+
+            # 獲取當前圖片路徑
+            current_image_path = self.image_viewer.image_handler.image_files[
+                self.image_viewer.image_handler.current_index]
+
+            # 打開當前圖片
+            with Image.open(current_image_path) as img:
+                # 獲取當前暫存列表中的提示詞
+                temp_prompts = list(self.right_list.listbox.get(0, tk.END))
+
+                # 獲取建議
+                suggestions = self.gemini.get_prompt_suggestions(
+                    img, temp_prompts)
+
+                if suggestions:
+                    # 獲取當前左側列表中的所有項目
+                    existing_items = self.left_list.listbox.get(0, tk.END)
+
+                    # 添加建議到提示詞列表
+                    added_count = 0
+                    for suggestion in suggestions:
+                        # 確保建議不為空且不在現有列表中
+                        if suggestion and suggestion not in existing_items:
+                            self.left_list.listbox.insert(tk.END, suggestion)
+                            added_count += 1
+
+                    # 更新狀態標籤
+                    if added_count > 0:
+                        self.status_label.config(
+                            text=f"{self.get_text('suggestions_added')} ({added_count})")
+                    else:
+                        self.status_label.config(
+                            text=self.get_text("no_new_suggestions"))
+                else:
+                    self.status_label.config(
+                        text=self.get_text("no_suggestions"))
+
+        except Exception as e:
+            print(f"Error getting Gemini suggestions: {str(e)}")
+            self.status_label.config(text=self.get_text("suggestion_error"))

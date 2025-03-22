@@ -1,2 +1,4 @@
 Pillow==11.1.0  # 用於圖片處理（PIL）
 # tkinter 是 Python 標準庫的一部分，不需要額外安裝 
+google-generativeai
+python-dotenv 

@@ -5,7 +5,7 @@
 ## 繁體中文
 
 ### 簡介
-Prompt Reader 是一個用於管理和編輯圖片提示詞的工具。它可以幫助用戶查看圖片、編輯相關的提示詞，並提供暫存功能以重複使用常用的提示詞。
+Prompt Reader 是一個用於管理和編輯圖片提示詞的工具。它可以幫助用戶查看圖片、編輯相關的提示詞，並提供暫存功能以重複使用常用的提示詞。同時整合了 Gemini AI 來協助生成更好的提示詞。
 
 ![程式主界面](img/zh_TW.jpg)
 
@@ -13,6 +13,8 @@ Prompt Reader 是一個用於管理和編輯圖片提示詞的工具。它可以
 - Python 3.10 或更高版本
 - tkinter
 - Pillow 11.1.0（用於圖片處理）
+- google-generativeai（用於 Gemini API）
+- python-dotenv（用於環境變數管理）
 - 作業系統：Windows、macOS 或 Linux
 
 ### 安裝說明
@@ -21,6 +23,12 @@ Prompt Reader 是一個用於管理和編輯圖片提示詞的工具。它可以
    ```bash
    pip install -r requirements.txt
    ```
+3. 設置環境變數：
+   - 複製 `.env.example` 為 `.env`
+   - 在 `.env` 文件中設置您的 Gemini API 密鑰：
+     ```
+     GEMINI_API_KEY=your_api_key_here
+     ```
 
 ### 功能特點
 - 圖片瀏覽功能
@@ -37,6 +45,10 @@ Prompt Reader 是一個用於管理和編輯圖片提示詞的工具。它可以
   - 可將常用提示詞保存到暫存列表
   - 支持在提示詞列表和暫存列表間複製提示詞
   - 自動保存暫存列表到 temp.txt 文件
+- AI 輔助功能
+  - 整合 Gemini AI 生成提示詞建議
+  - 基於當前圖片和暫存列表提供相關建議
+  - 自動過濾重複的提示詞
 - 多語言支持
   - 支持切換界面語言（繁體中文、簡體中文、英文）
   - 所有操作提示均支持多語言顯示
@@ -64,7 +76,12 @@ Prompt Reader 是一個用於管理和編輯圖片提示詞的工具。它可以
    - 所有提示詞會自動合併並去重
    - 可以使用右鍵選單刪除提示詞
    - 可以雙擊將提示詞在列表間移動
-5. 查看提示詞統計：
+5. 使用 AI 輔助：
+   - 確保已設置 Gemini API 密鑰
+   - 選擇一張圖片
+   - 點擊「獲取建議」按鈕
+   - AI 會根據當前圖片和暫存列表生成建議
+6. 查看提示詞統計：
    - 狀態欄會顯示圖片提示詞數量
    - 顯示文本提示詞數量
    - 顯示不重複提示詞總數
@@ -72,6 +89,8 @@ Prompt Reader 是一個用於管理和編輯圖片提示詞的工具。它可以
 ### 檔案說明
 - `prompt_reader.py`：主程式入口
 - `requirements.txt`：Python 套件需求檔案
+- `.env`：環境變數配置文件（需自行創建）
+- `.env.example`：環境變數範例文件
 - `temp.txt`：暫存提示詞列表檔案
 - `*.txt`：與圖片同名的提示詞檔案
 
@@ -80,7 +99,7 @@ Prompt Reader 是一個用於管理和編輯圖片提示詞的工具。它可以
 ## English
 
 ### Introduction
-Prompt Reader is a tool for managing and editing image prompts. It helps users view images, edit related prompts, and provides a temporary storage feature for reusing common prompts.
+Prompt Reader is a tool for managing and editing image prompts. It helps users view images, edit related prompts, and provides a temporary storage feature for reusing common prompts. It also integrates with Gemini AI to assist in generating better prompts.
 
 ![Main Interface](img/en.jpg)
 
@@ -88,6 +107,8 @@ Prompt Reader is a tool for managing and editing image prompts. It helps users v
 - Python 3.10 or higher
 - tkinter 
 - Pillow 11.1.0 (for image processing)
+- google-generativeai (for Gemini API)
+- python-dotenv (for environment variables)
 - Operating System: Windows, macOS, or Linux
 
 ### Installation
@@ -96,6 +117,12 @@ Prompt Reader is a tool for managing and editing image prompts. It helps users v
    ```bash
    pip install -r requirements.txt
    ```
+3. Set up environment variables:
+   - Copy `.env.example` to `.env`
+   - Set your Gemini API key in the `.env` file:
+     ```
+     GEMINI_API_KEY=your_api_key_here
+     ```
 
 ### Features
 - Image Browsing
@@ -112,6 +139,10 @@ Prompt Reader is a tool for managing and editing image prompts. It helps users v
   - Save commonly used prompts to temporary list
   - Copy prompts between prompt list and temporary list
   - Auto-save temporary list to temp.txt file
+- AI Assistance
+  - Integrate Gemini AI for prompt suggestions
+  - Generate suggestions based on current image and temp list
+  - Automatically filter duplicate prompts
 - Multi-language Support
   - Switch interface language (Traditional Chinese, Simplified Chinese, English)
   - All operation prompts support multiple languages
@@ -139,7 +170,12 @@ Prompt Reader is a tool for managing and editing image prompts. It helps users v
    - All prompts are automatically merged and deduplicated
    - Use right-click menu to delete prompts
    - Double-click to move prompts between lists
-5. View Prompt Statistics:
+5. Use AI Assistance:
+   - Ensure Gemini API key is set up
+   - Select an image
+   - Click "Get Suggestions" button
+   - AI will generate suggestions based on current image and temp list
+6. View Prompt Statistics:
    - Status bar shows number of prompts from image
    - Shows number of prompts from text file
    - Shows total number of unique prompts
@@ -147,6 +183,8 @@ Prompt Reader is a tool for managing and editing image prompts. It helps users v
 ### File Description
 - `prompt_reader.py`: Main program entry
 - `requirements.txt`: Python package requirements file
+- `.env`: Environment variables configuration (needs to be created)
+- `.env.example`: Environment variables example file
 - `temp.txt`: Temporary prompt list file
 - `*.txt`: Prompt files with same names as images 
 

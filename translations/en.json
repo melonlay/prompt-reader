@@ -24,5 +24,12 @@
     "total_unique_prompts": "Total unique prompts",
     "no_prompts_found": "No prompts found",
     "image_prompts_count": "Image prompts count",
-    "txt_prompts_count": "Text prompts count"
+    "txt_prompts_count": "Text prompts count",
+    "get_suggestions": "Get Suggestions",
+    "no_api_key": "Gemini API key not found",
+    "no_image_selected": "No image selected",
+    "suggestions_added": "Suggestions added to prompt list",
+    "no_suggestions": "No suggestions received",
+    "suggestion_error": "Error getting suggestions",
+    "no_new_suggestions": "No new suggestions to add"
 } 
