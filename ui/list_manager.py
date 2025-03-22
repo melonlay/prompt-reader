@@ -397,15 +397,18 @@ class ListManager:
 
     def update_texts(self):
         """更新界面文字"""
+        # 更新標題
         self.left_list.update_texts(self.get_text("text_content"))
         self.right_list.update_texts(self.get_text("temp_list"))
+
         # 更新按鈕文字
         self.add_to_left_button.config(text=self.get_text("add_to_prompts"))
         self.add_to_right_button.config(text=self.get_text("add_to_temp"))
-        # 更新右鍵選單文字
-        self.context_menu.entryconfig(0, label=self.get_text("delete"))
-        # 清空狀態標籤
-        self.status_label.config(text="")
+        self.gemini_button.config(text=self.get_text("get_suggestions"))
+
+        # 更新右鍵選單
+        self.context_menu.entryconfigure(
+            0, label=self.get_text("delete"))
 
     def add_to_left(self):
         """添加提示詞到左側列表"""
