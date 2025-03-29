@@ -1,3 +1,4 @@
+from typing import List, Optional
 import os
 from PIL import Image, ImageTk
 import tkinter as tk
@@ -5,16 +6,16 @@ from tkinter import ttk
 
 
 class ImageHandler:
-    def __init__(self):
-        self.current_index = -1
-        self.image_files = []
-        self.photo = None
+    def __init__(self) -> None:
+        self.current_index: int = -1
+        self.image_files: List[str] = []
+        self.photo: Optional[ImageTk.PhotoImage] = None
         self.current_image = None
         # 設置固定的顯示區域尺寸
         self.display_width = 400
         self.display_height = 400
 
-    def load_images(self, folder_path):
+    def load_images(self, folder_path: str) -> bool:
         """加載資料夾中的圖片"""
         self.image_files = []
         for file in os.listdir(folder_path):
@@ -26,7 +27,7 @@ class ImageHandler:
             self.current_image = Image.open(self.image_files[0])
         return bool(self.image_files)
 
-    def resize_image(self, image):
+    def resize_image(self, image: Image.Image) -> Image.Image:
         """按比例調整圖片大小以適應固定的顯示區域"""
         # 獲取原始圖片尺寸
         w, h = image.size
@@ -55,7 +56,7 @@ class ImageHandler:
 
         return background
 
-    def show_image(self, index, image_label):
+    def show_image(self, index: int, image_label) -> bool:
         """顯示指定索引的圖片"""
         if 0 <= index < len(self.image_files):
             self.current_index = index
@@ -75,29 +76,29 @@ class ImageHandler:
                 return False
         return False
 
-    def get_current_image_path(self):
+    def get_current_image_path(self) -> Optional[str]:
         """獲取當前圖片路徑"""
         if 0 <= self.current_index < len(self.image_files):
             return self.image_files[self.current_index]
         return None
 
-    def get_total_images(self):
+    def get_total_images(self) -> int:
         """獲取圖片總數"""
         return len(self.image_files)
 
-    def get_current_index(self):
+    def get_current_index(self) -> int:
         """獲取當前圖片索引"""
         return self.current_index
 
-    def can_move_prev(self):
+    def can_move_prev(self) -> bool:
         """檢查是否可以顯示上一張圖片"""
         return self.current_index > 0
 
-    def can_move_next(self):
+    def can_move_next(self) -> bool:
         """檢查是否可以顯示下一張圖片"""
         return self.current_index < len(self.image_files) - 1
 
-    def set_current_image(self, index):
+    def set_current_image(self, index: int) -> bool:
         """設置當前圖片"""
         if 0 <= index < len(self.image_files):
             self.current_index = index

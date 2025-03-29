@@ -1,22 +1,25 @@
+from typing import Optional, Callable
 import tkinter as tk
-from tkinter import ttk
-from .image_viewer import ImageViewer
+from tkinter import ttk, filedialog
+import os
 from .list_manager import ListManager
+from .image_viewer import ImageViewer
+from utils.translations import TranslationManager
 
 
 class MainWindow:
-    def __init__(self, translation_manager):
-        self.translation_manager = translation_manager
+    def __init__(self, translation_manager: TranslationManager) -> None:
         self.root = tk.Tk()  # 創建根窗口
+        self.translation_manager = translation_manager
         self.setup_main_window()
         self.create_ui_layout()
         self.connect_components()
 
-    def get_text(self, key):
+    def get_text(self, key: str) -> str:
         """獲取當前語言的文本"""
         return self.translation_manager.get_text(key)
 
-    def setup_main_window(self):
+    def setup_main_window(self) -> None:
         """初始化主視窗設置"""
         self.root.title(self.get_text("window_title"))
         self.root.geometry("1200x800")
@@ -25,7 +28,7 @@ class MainWindow:
         self.root.grid_rowconfigure(0, weight=1)
         self.root.grid_columnconfigure(0, weight=1)
 
-    def create_ui_layout(self):
+    def create_ui_layout(self) -> None:
         """創建整體UI布局"""
         self.create_main_frame()
         self.create_language_selector()
@@ -42,7 +45,7 @@ class MainWindow:
         self.list_manager.frame.grid(
             row=1, column=1, sticky=(tk.W, tk.E, tk.N, tk.S))
 
-    def connect_components(self):
+    def connect_components(self) -> None:
         """連接組件之間的功能"""
         print("正在連接組件...")  # 調試信息
 
@@ -101,9 +104,18 @@ class MainWindow:
         )
         self.lang_label.grid(row=0, column=0, padx=(0, 5))
 
-        language_names = self.translation_manager.get_language_names()
-        self.lang_var = tk.StringVar(
-            value=self.translation_manager.get_current_language())
+        # 獲取語言代碼和名稱的映射
+        language_names = {
+            "zh_CN": "简体中文",
+            "zh_TW": "繁體中文",
+            "en": "English"
+        }
+
+        # 設置當前語言
+        current_lang = self.translation_manager.get_current_language()
+        self.lang_var = tk.StringVar(value=language_names[current_lang])
+
+        # 創建下拉框
         self.lang_selector = ttk.Combobox(
             self.lang_frame,
             textvariable=self.lang_var,
@@ -112,20 +124,22 @@ class MainWindow:
             state="readonly"
         )
         self.lang_selector.grid(row=0, column=1)
-        self.lang_selector.set(
-            language_names[self.translation_manager.get_current_language()])
+        self.lang_selector.set(language_names[current_lang])
         self.lang_selector.bind('<<ComboboxSelected>>',
                                 self.on_language_change)
 
-    def on_language_change(self, event=None):
+    def on_language_change(self, event: Optional[tk.Event] = None) -> None:
         """處理語言變更"""
         selected_name = self.lang_selector.get()
-        language_names = self.translation_manager.get_language_names()
-        for code, name in language_names.items():
-            if name == selected_name:
-                self.translation_manager.set_language(code)
-                self.update_all_texts()
-                break
+        # 根據選擇的名稱找到對應的語言代碼
+        language_codes = {
+            "简体中文": "zh_CN",
+            "繁體中文": "zh_TW",
+            "English": "en"
+        }
+        selected_code = language_codes[selected_name]
+        self.translation_manager.set_language(selected_code)
+        self.update_all_texts()
 
     def update_all_texts(self):
         """更新所有界面文字"""

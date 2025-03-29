@@ -1,13 +1,20 @@
+from typing import Dict, List, Optional
 import json
 import os
 
 
 class TranslationManager:
-    def __init__(self):
+    def __init__(self) -> None:
         self.current_lang = "zh_TW"  # 預設繁體中文
+        self.translations: Dict[str, Dict[str, str]] = {}
+        self.language_names = {
+            "zh_CN": "简体中文",
+            "zh_TW": "繁體中文",
+            "en": "English"
+        }
         self.setup_translations()
 
-    def setup_translations(self):
+    def setup_translations(self) -> None:
         """設置翻譯字典"""
         self.translations = {}
         self.language_names = {
@@ -30,21 +37,21 @@ class TranslationManager:
                 # 如果加載失敗，使用空字典
                 self.translations[lang_code] = {}
 
-    def get_text(self, key):
+    def get_text(self, key: str) -> str:
         """獲取當前語言的文本"""
         return self.translations[self.current_lang].get(key, key)
 
-    def get_language_names(self):
+    def get_language_names(self) -> List[str]:
         """獲取語言名稱映射"""
-        return self.language_names
+        return list(self.language_names.keys())
 
-    def set_language(self, lang_code):
+    def set_language(self, lang_code: str) -> None:
         """設置當前語言"""
         if lang_code in self.translations:
             self.current_lang = lang_code
             return True
         return False
 
-    def get_current_language(self):
+    def get_current_language(self) -> str:
         """獲取當前語言代碼"""
         return self.current_lang

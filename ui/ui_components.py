@@ -1,3 +1,4 @@
+from typing import Callable, Optional
 import tkinter as tk
 from tkinter import ttk
 

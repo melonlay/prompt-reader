@@ -7,51 +7,49 @@ import traceback
 from dotenv import load_dotenv
 from utils.translations import TranslationManager
 from ui.main_window import MainWindow
+from typing import Optional
+import tkinter as tk
+from tkinter import ttk
 
 # 加载环境变量
 load_dotenv()
 
 
-def setup_style(root):
+def setup_style(root: tk.Tk) -> None:
     """設置應用程序樣式"""
-    import tkinter.ttk as ttk
-    style = ttk.Style(root)
+    style = ttk.Style()
+    style.theme_use("clam")
 
-    # 設置標題標籤樣式
-    style.configure('Title.TLabel', font=('Arial', 10, 'bold'))
+    # 設置字體
+    default_font = ("Microsoft JhengHei", 10)
+    style.configure(".", font=default_font)
 
     # 設置按鈕樣式
-    style.configure('TButton', padding=3)
+    style.configure("TButton", padding=5)
 
-    return style
+    # 設置標籤樣式
+    style.configure("TLabel", padding=5)
+
+    # 設置輸入框樣式
+    style.configure("TEntry", padding=5)
+
+    # 設置列表框樣式
+    style.configure("TListbox", padding=5)
 
 
-def main():
-    """主程序入口點"""
-    try:
-        print("正在初始化翻譯管理器...")
-        # 初始化翻譯管理器
-        translation_manager = TranslationManager()
-        translation_manager.set_language('zh_TW')  # 設置默認語言為繁體中文
+def main() -> None:
+    """主函數"""
+    # 創建翻譯管理器
+    translation_manager = TranslationManager()
 
-        print("正在創建主窗口...")
-        # 創建主窗口
-        main_window = MainWindow(translation_manager)
+    # 創建主窗口
+    app = MainWindow(translation_manager)
 
-        print("正在設置樣式...")
-        # 設置樣式
-        style = setup_style(main_window.root)
+    # 設置樣式
+    setup_style(app.root)
 
-        print("啟動應用程序...")
-        # 運行應用程序
-        main_window.run()
-    except Exception as e:
-        print(f"程序運行出錯：{str(e)}", file=sys.stderr)
-        print("詳細錯誤信息：", file=sys.stderr)
-        traceback.print_exc()
-        return 1
-
-    return 0
+    # 運行應用程序
+    app.run()
 
 
 if __name__ == "__main__":

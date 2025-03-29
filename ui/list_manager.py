@@ -4,6 +4,7 @@ import os
 from .ui_components import ListFrame
 from utils.gemini_interface import GeminiInterface
 from PIL import Image
+from typing import List, Optional, Callable
 
 
 class ListManager:

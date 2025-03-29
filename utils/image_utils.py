@@ -1,8 +1,11 @@
+from typing import List, Optional
+import os
 from PIL import Image
 import json
+import pytesseract
 
 
-def get_image_prompts(image_path):
+def get_image_prompts(image_path: str) -> List[str]:
     """
     從圖片中讀取提示詞信息
 

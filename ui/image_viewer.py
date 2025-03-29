@@ -1,91 +1,98 @@
+from typing import Optional, Callable, List
 import tkinter as tk
 from tkinter import ttk, filedialog
 import os
 from utils.image_handler import ImageHandler
 from utils.image_utils import get_image_prompts
 from PIL import Image, ImageTk
+from utils.translations import TranslationManager
 
 
 class ImageViewer:
-    def __init__(self, parent, translation_manager):
+    def __init__(self, parent: tk.Tk, translation_manager: TranslationManager) -> None:
+        self.parent = parent
         self.translation_manager = translation_manager
         self.image_handler = ImageHandler()
-        self.create_frame(parent)
+        self.frame = self.create_frame(parent)
         self.current_folder = ""
         self.current_txt_path = None
+        self.on_save: Optional[Callable] = None
+        self.on_exit: Optional[Callable] = None
 
-    def get_text(self, key):
+    def get_text(self, key: str) -> str:
         """獲取當前語言的文本"""
         return self.translation_manager.get_text(key)
 
-    def create_frame(self, parent):
+    def create_frame(self, parent: tk.Tk) -> ttk.Frame:
         """創建圖片查看器框架"""
-        self.frame = ttk.Frame(parent)
-        self.frame.grid_rowconfigure(1, weight=1)
-        self.frame.grid_columnconfigure(0, weight=1)
+        frame = ttk.Frame(parent)
+        frame.grid_rowconfigure(1, weight=1)
+        frame.grid_columnconfigure(0, weight=1)
 
         # 文件夾選擇區域
-        self.create_folder_frame()
+        self.create_folder_frame(frame)
 
         # 圖片顯示區域
-        self.create_image_frame()
+        self.create_image_frame(frame)
 
         # 導航控制區域
-        self.create_navigation_frame()
+        self.create_navigation_frame(frame)
 
         # 退出按鈕
         self.exit_button = ttk.Button(
-            self.frame,
+            frame,
             text=self.get_text("exit"),
             command=self.on_exit
         )
         self.exit_button.grid(row=3, column=0, pady=10)
 
-    def create_folder_frame(self):
+        return frame
+
+    def create_folder_frame(self, parent: ttk.Frame) -> None:
         """創建文件夾選擇區域"""
-        self.folder_frame = ttk.Frame(self.frame)
-        self.folder_frame.grid(row=0, column=0, sticky=(tk.W, tk.E), pady=5)
-        self.folder_frame.grid_columnconfigure(1, weight=1)
+        folder_frame = ttk.Frame(parent)
+        folder_frame.grid(row=0, column=0, sticky=(tk.W, tk.E), pady=5)
+        folder_frame.grid_columnconfigure(1, weight=1)
 
         self.folder_button = ttk.Button(
-            self.folder_frame,
+            folder_frame,
             text=self.get_text("select_folder"),
             command=self.select_folder
         )
         self.folder_button.grid(row=0, column=0, padx=(0, 10))
 
         self.folder_label = ttk.Label(
-            self.folder_frame,
+            folder_frame,
             text=self.get_text("no_folder"),
             wraplength=250
         )
         self.folder_label.grid(row=0, column=1, sticky=(tk.W, tk.E))
 
-    def create_image_frame(self):
+    def create_image_frame(self, parent: ttk.Frame) -> None:
         """創建圖片顯示區域"""
-        self.image_frame = ttk.Frame(
-            self.frame,
+        image_frame = ttk.Frame(
+            parent,
             width=400,
             height=400
         )
-        self.image_frame.grid(row=1, column=0, sticky=(
+        image_frame.grid(row=1, column=0, sticky=(
             tk.W, tk.E, tk.N, tk.S), pady=10)
-        self.image_frame.grid_propagate(False)
-        self.image_frame.grid_rowconfigure(0, weight=1)
-        self.image_frame.grid_columnconfigure(0, weight=1)
+        image_frame.grid_propagate(False)
+        image_frame.grid_rowconfigure(0, weight=1)
+        image_frame.grid_columnconfigure(0, weight=1)
 
-        self.image_label = ttk.Label(self.image_frame)
+        self.image_label = ttk.Label(image_frame)
         self.image_label.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
 
-    def create_navigation_frame(self):
+    def create_navigation_frame(self, parent: ttk.Frame) -> None:
         """創建導航控制區域"""
-        self.nav_frame = ttk.Frame(self.frame)
-        self.nav_frame.grid(row=2, column=0, sticky=(tk.W, tk.E), pady=5)
-        self.nav_frame.grid_columnconfigure(1, weight=1)
+        nav_frame = ttk.Frame(parent)
+        nav_frame.grid(row=2, column=0, sticky=(tk.W, tk.E), pady=5)
+        nav_frame.grid_columnconfigure(1, weight=1)
 
         # 上一張按鈕
         self.prev_button = ttk.Button(
-            self.nav_frame,
+            nav_frame,
             text=self.get_text("prev"),
             command=self.prev_image,
             state=tk.DISABLED
@@ -93,7 +100,7 @@ class ImageViewer:
         self.prev_button.grid(row=0, column=0, padx=5)
 
         # 圖片計數區域（包含輸入框）
-        self.counter_frame = ttk.Frame(self.nav_frame)
+        self.counter_frame = ttk.Frame(nav_frame)
         self.counter_frame.grid(row=0, column=1)
 
         # 當前圖片輸入框
@@ -114,7 +121,7 @@ class ImageViewer:
 
         # 下一張按鈕
         self.next_button = ttk.Button(
-            self.nav_frame,
+            nav_frame,
             text=self.get_text("next"),
             command=self.next_image,
             state=tk.DISABLED
@@ -123,14 +130,14 @@ class ImageViewer:
 
         # 保存按鈕
         self.save_button = ttk.Button(
-            self.nav_frame,
+            nav_frame,
             text=self.get_text("save"),
             command=self.on_save_click,
             state=tk.DISABLED
         )
         self.save_button.grid(row=0, column=3, padx=5)
 
-    def select_folder(self):
+    def select_folder(self) -> None:
         """選擇文件夾並加載內容"""
         print("\n=== ImageViewer 開始選擇資料夾 ===")  # 調試信息
 
@@ -163,7 +170,7 @@ class ImageViewer:
         print("=== ImageViewer 資料夾選擇完成 ===\n")  # 調試信息
         return None
 
-    def show_image(self, index):
+    def show_image(self, index: int) -> None:
         """顯示指定索引的圖片"""
         if self.image_handler.set_current_image(index):
             # 更新當前圖片編號
@@ -237,29 +244,29 @@ class ImageViewer:
             return True
         return False
 
-    def update_counter(self, current, total):
+    def update_counter(self, current: int, total: int) -> None:
         """更新圖片計數"""
         self.current_image_var.set(str(current))
         self.total_label.config(text=f"/{total}")
 
-    def update_button_states(self):
+    def update_button_states(self) -> None:
         """更新按鈕狀態"""
         self.prev_button.config(
             state=tk.NORMAL if self.image_handler.can_move_prev() else tk.DISABLED)
         self.next_button.config(
             state=tk.NORMAL if self.image_handler.can_move_next() else tk.DISABLED)
 
-    def prev_image(self):
+    def prev_image(self) -> None:
         """顯示上一張圖片"""
         if self.image_handler.can_move_prev():
             self.show_image(self.image_handler.get_current_index() - 1)
 
-    def next_image(self):
+    def next_image(self) -> None:
         """顯示下一張圖片"""
         if self.image_handler.can_move_next():
             self.show_image(self.image_handler.get_current_index() + 1)
 
-    def on_save_click(self):
+    def on_save_click(self) -> None:
         """處理保存按鈕點擊事件"""
         print("保存按鈕被點擊")  # 調試信息
         if hasattr(self, 'save_text_content'):
@@ -268,17 +275,17 @@ class ImageViewer:
         else:
             print("錯誤：save_text_content 方法未連接")  # 調試信息
 
-    def load_text_content(self, image_path):
+    def load_text_content(self, image_path: str) -> None:
         """加載文本內容"""
         # 這個方法將在 ListManager 中實現
         pass
 
-    def on_exit(self):
+    def on_exit(self) -> None:
         """退出程序"""
         if hasattr(self, 'frame') and self.frame.winfo_exists():
             self.frame.winfo_toplevel().quit()
 
-    def update_texts(self):
+    def update_texts(self) -> None:
         """更新界面文字"""
         self.folder_button.config(text=self.get_text("select_folder"))
         self.folder_label.config(text=self.get_text(
@@ -288,7 +295,7 @@ class ImageViewer:
         self.save_button.config(text=self.get_text("save"))
         self.exit_button.config(text=self.get_text("exit"))
 
-    def on_image_number_enter(self, event):
+    def on_image_number_enter(self, event: tk.Event) -> None:
         """處理圖片編號輸入"""
         try:
             # 獲取輸入的數字
@@ -306,7 +313,7 @@ class ImageViewer:
             # 如果輸入的不是數字，恢復當前圖片編號
             self.validate_image_number(None)
 
-    def validate_image_number(self, event):
+    def validate_image_number(self, event: tk.Event) -> None:
         """驗證並修正圖片編號"""
         if self.image_handler.get_total_images() > 0:
             current = self.image_handler.get_current_index() + 1
@@ -314,7 +321,7 @@ class ImageViewer:
         else:
             self.current_image_var.set("0")
 
-    def update_prompt_list(self, prompts):
+    def update_prompt_list(self, prompts: List[str]) -> None:
         """更新提示詞列表"""
         if hasattr(self, 'list_manager'):
             # 清空左側列表
